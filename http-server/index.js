@@ -40,15 +40,15 @@ http
     switch (url) {
       case "/registration":
         response.write(regscont);
-        response.end;
+        response.end();
         break;
       case"/project":
         response.write(projectcontent);
-        response.end;
+        response.end();
         break;
       default:
         response.write(homecont);
-        response.end;
+        response.end();
         break;
         }
     })

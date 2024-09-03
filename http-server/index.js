@@ -10,7 +10,7 @@ const args = minimist(process.argv.slice(2), {
 
 let regscont = "";
 let projectcontent = "";
-
+let homecont = "";
 
 fs.readFile("project.html", (err, project) => {
   if (err) {
@@ -26,6 +26,12 @@ fs.readFile("registration.html", (err, registration) => {
   regscont = registration;
 });
 
+fs.readFile("home.html" , (err ,home) => {
+  if (err) {
+    throw err;
+  }
+  homecont = home ;
+})
 
 const port = parseInt(args.port);
 
@@ -40,8 +46,12 @@ http
         response.write(regscont);
         response.end;
         break;
-      default:
+      case"/project":
         response.write(projectcontent);
+        response.end;
+        break;
+      default:
+        response.write(homecont);
         response.end;
         break;
         }

@@ -2,11 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const minimist = require('minimist');
 
-const args = minimist(process.argv.slice(2), {
-  default: {
-    port: 2000
-  }
-});
+const args = minimist(process.argv.slice(2));
 
 let regscont = "";
 let projectcontent = "";

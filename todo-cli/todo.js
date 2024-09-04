@@ -8,24 +8,24 @@ const todoList = () => {
     }
   
     const overdue = () => {
-        let date = new Date().toDateString("en-C");
+        let date = new Date().toLocaleDateString("en-CA");
         return all.filter((item) => item.dueDate < date );
     }
   
     const dueToday = () => {
-        let date = new Date().toDateString("en-C");
+        let date = new Date().toLocaleDateString("en-CA");
         return all.filter((item) => item.dueDate === date );
     }
   
     const dueLater = () => {
-        let date = new Date().toDateString("en-C");
+        let date = new Date().toLocaleDateString("en-CA");
         return all.filter((item) => item.dueDate > date );
     }
   
     const toDisplayableList = (list) => {
         return list.map((item) => {
             const checkbox = item.completed ? "[x]" : "[ ]";
-            const displayDate = item.dueDate === new Date().toDateString("en-C") ? "" : item.dueDate;
+            const displayDate = item.dueDate === new Date().toLocaleDateString("en-CA") ? "" : item.dueDate;
             return `${checkbox} ${item.title}${displayDate ? " " + displayDate : ""}`}).join("\n");
   };
 

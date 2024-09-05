@@ -28,31 +28,42 @@ describe("Todolist Test Suite", () => {
     });
 
     test("to retrive due today item", () => {
-        let itemsDueTday = dueToday();
-        expect(itemsDueTday.every(item => item.dueDate === new Date().toLocaleDateString("en-CA"))).toBe(true);
+       const itemsDueToday = dueToday();
+       var today_date = new Date();
+       today_date.setDate(today_date.getDate());
+       let today = today_date.toLocaleDateString("en-CA");
+       add({
+        title: "today System",
+        dueDate: today,
+        completed: false,
+      });
+      expect(dueToday().length).toBe(itemsDueToday.length +1);
     });
     
-    test("Should retrieve overdue items", () => {
+    test("Over due tasks", () => {
+        const overdueItems=overdue();
+        var prev_date = new Date();
+        prev_date.setDate(prev_date.getDate() - 1);
+        let yesterday=prev_date.toLocaleDateString("en-CA");
         add({
-          title: 'Overdue todo',
+          title: "Update System",
+          dueDate: yesterday,
           completed: false,
-          dueDate: new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString("en-CA"),
         });
-      
-        const overdueItems = overdue();
-        expect(overdueItems.length).toBeGreaterThan(0); // At least one item should be overdue
-        expect(overdueItems.every(item => item.dueDate < new Date().toLocaleDateString("en-CA"))).toBe(true);
+        expect(overdue().length).toBe(overdueItems.length +1);
       });
       
-    
-        test("to retrive dueLater item", () => {
+    test("to retrive dueLater item", () => {
+        const itemsDueLater =  dueLater();
+        var nxt_date = new Date();
+        nxt_date.setDate(nxt_date.getDate() + 1);
+        let tommorow = nxt_date.toLocaleDateString("en-CA");
         add({
             title: 'dueLater todo',
-            completed: false,
-            dueDate: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("en-CA")
+            dueDate: tommorow,
+            completed: false
         });
-        let itemsDueLater = dueLater();
-        expect(itemsDueLater.every(item => item.dueDate > new Date().toLocaleDateString("en-CA"))).toBe(true);
+        expect(dueLater().length).toBe(itemsDueLater.length + 1);
     });
 
 

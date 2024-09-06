@@ -40,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
       const todo = Todo.findAll({
         where: {
           dueDate: {[ Op.lt ] : new Date(),},
-          completed: false ,
         }
       });
       return await todo ;

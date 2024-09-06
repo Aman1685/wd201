@@ -44,10 +44,12 @@ describe("Tests for functions in todo.js", function () {
 
     expect(aTodo.completed).toBe(true);
   })
-
+  
   test("For a completed past-due item, Todo.displayableString should return a string of the format `ID. [x] TITLE DUE_DATE`", async () => {
-    const overdueItems = await db.Todo.overdue()
-    const aTodo = overdueItems[0];
+    const overdueItems = await db.Todo.overdue() 
+    const aTodo = overdueItems[0] ;
+    console.log(overdueItems);
+    console.log(aTodo);
     expect(aTodo.completed).toBe(true);
     const displayValue = aTodo.displayableString()
     expect(displayValue).toBe(`${aTodo.id}. [x] ${aTodo.title} ${aTodo.dueDate}`)

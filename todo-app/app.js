@@ -29,7 +29,7 @@ app.get("/todos/:id", async function (request, response) {
   }
 });
 
-app.post("/todo", async function (request, response) {
+app.post("/todos", async function (request, response) {
   try {
     const todo = await Todo.addtodo(request.body);
     return response.json(todo);

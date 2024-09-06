@@ -22,7 +22,7 @@ describe("Todo Application", function () {
   });
 
   test("Creates a todo and responds with json at /todo POST endpoint", async () => {
-    const response = await agent.post("/todo").send({
+    const response = await agent.post("/todos").send({
       title: "Buy milk",
       dueDate: new Date().toISOString(),
       completed: false,
@@ -36,7 +36,7 @@ describe("Todo Application", function () {
   });
 
   test("Marks a todo with the given ID as complete", async () => {
-    const response = await agent.post("/todo").send({
+    const response = await agent.post("/todos").send({
       title: "Buy milk",
       dueDate: new Date().toISOString(),
       completed: false,
@@ -54,12 +54,12 @@ describe("Todo Application", function () {
   });
 
   test("Fetches all todo in the database using /todo endpoint", async () => {
-    await agent.post("/todo").send({
+    await agent.post("/todos").send({
       title: "Buy xbox",
       dueDate: new Date().toISOString(),
       completed: false,
     });
-    await agent.post("/todo").send({
+    await agent.post("/todos").send({
       title: "Buy ps3",
       dueDate: new Date().toISOString(),
       completed: false,
@@ -72,7 +72,7 @@ describe("Todo Application", function () {
   });
 
  test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
-  const response = await agent.post("/todo").send({
+  const response = await agent.post("/todos").send({
     title: "Buy milk",
     dueDate: new Date().toISOString(),
     completed: false,

@@ -1,5 +1,5 @@
-<h5>Overdue (<span id="count-overdue"><%= overdueTodos.length %></span>)</h5>
-<ul class="list-none">
+<h5>Overdue </h5>
+<ul class="list-none">(<span id="count-overdue"><%= overdueTodos.length %></span>)
     <% overdueTodos.forEach(todo => { %>
         <li>
             <input type="checkbox" <% if (todo.completed) { %> checked <% } %> />
@@ -19,8 +19,8 @@
     <% }); %>
 </ul>
 
-<h5>Due Today (<span id="count-due-today"><%= dueTodayTodos.length %></span>)</h5>
-<ul class="list-none">
+<h5>Due Today </h5>
+<ul class="list-none">(<span id="count-due-today"><%= dueTodayTodos.length %></span>)
     <% dueTodayTodos.forEach(todo => { %>
         <li>
             <input type="checkbox" <% if (todo.completed) { %> checked <% } %> />
@@ -40,8 +40,8 @@
     <% }); %>
 </ul>
 
-<h5>Due Later (<span id="count-due-later"><%= dueLaterTodos.length %></span>)</h5>
-<ul class="list-none">
+<h5>Due Later </h5>
+<ul class="list-none">(<span id="count-due-later"><%= dueLaterTodos.length %></span>)
     <% dueLaterTodos.forEach(todo => { %>
         <li>
             <input type="checkbox" <% if (todo.completed) { %> checked <% } %> />

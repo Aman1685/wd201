@@ -6,32 +6,28 @@ app.use(bodyParser.json());
 const path = require("path");
 
 app.set("view engine", "ejs");
-
-app.get("/", async  (request, response) =>  {
-  const allTodos = await Todo.getTodos();
-  if( request.accepts("html")){
-    response.render('index.ejs', {
-      allTodos
-    });
-  } else {
-    response.json({
-      allTodos
-    })
-  }
-});
-
-app.use(express.static(path.join(__dirname,'public')));
-
-app.get("/todos", async function (_request, response) {
-  console.log("Processing list of all Todos ...");
+app.get('/', async (req, res) => {
   try {
-    const todo = await Todo.findAll();
-    return response.json(todo);
+      const todos = await Todo.findAll(); // Fetch all todos from the database
+      
+      // Categorize todos
+      const today = new Date();
+      const overdueTodos = todos.filter(todo => new Date(todo.dueDate) < today );
+      const dueTodayTodos = todos.filter(todo => new Date(todo.dueDate).toDateString() === today.toDateString());
+      const dueLaterTodos = todos.filter(todo => new Date(todo.dueDate) > today);
+
+      // Render the main page with categorized todos
+      res.render('index', {
+          overdueTodos,
+          dueTodayTodos,
+          dueLaterTodos,
+      });
   } catch (error) {
-    console.log(error);
-    return response.status(422).json(error);
+      console.error('Error fetching todos:', error);
+      res.status(500).send('Server error');
   }
 });
+
 
 app.get("/todos/:id", async function (request, response) {
   try {
@@ -82,6 +78,7 @@ app.delete("/todos/:id", async function (request, response) {
     return response.status(422).json(error);
   }
 });
+
 
 
 

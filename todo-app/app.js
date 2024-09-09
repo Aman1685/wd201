@@ -1,54 +1,38 @@
 const express = require("express");
+var csrf = require("csurf");
 const app = express();
 const { Todo } = require("./models");
+var cookieParser = require("cookie-parser")
 const bodyParser = require("body-parser");
-var csrf =  require("csurf");
-var cookieParser = require("cookie-parser");
 app.use(bodyParser.json());
 const path = require("path");
+const { title } = require("process");
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf({ cookie: true }));
 
 app.set("view engine", "ejs");
 
-app.get('/', async (req, res) => {
-    const todos = await Todo.findAll(); 
-    
-    const today = new Date();
-today.setHours(0, 0, 0, 0); 
+app.get('/', async (request, response) => {
+  const overdue = await Todo.overdue();
+  const dueToday = await Todo.dueToday();
+  const dueLater = await Todo.dueLater();
+  if (request.accepts("html")) {
+    response.render("index", {
+      title: "Todo application",
+      overdue,
+      dueToday,
+      dueLater,
+      csrfToken: request.csrfToken(),
+    })
+  } else {
+    response.json({
+      overdue,
+      dueToday,
+      dueLater,
+    })
+    } });
 
-const overdueTodos = todos.filter(todo => {
-  const dueDate = new Date(todo.dueDate);
-  dueDate.setHours(0, 0, 0, 0);
-  return dueDate < today;
-});
-
-const dueTodayTodos = todos.filter(todo => {
-  const dueDate = new Date(todo.dueDate);
-  dueDate.setHours(0, 0, 0, 0); 
-  return dueDate.toDateString() === today.toDateString();
-});
-
-const dueLaterTodos = todos.filter(todo => {
-  const dueDate = new Date(todo.dueDate);
-  dueDate.setHours(0, 0, 0, 0); 
-  return dueDate > today;
-});
-if (req.accepts("html")) {
-  res.render('index', {
-      overdueTodos,
-      dueTodayTodos,
-      dueLaterTodos,
-      csrfToken: req.csrfToken(),
-    });} else {
-    res.json({
-      overdueTodos,
-      dueTodayTodos,
-      dueLaterTodos,
-    });
-  }
-});
 
 app.get("/todos/:id", async function (request, response) {
   try {
@@ -65,7 +49,7 @@ app.post("/todos", async function (request, response) {
     const todo = await Todo.create({
       title: request.body.title,
       dueDate: request.body.dueDate,
-      completed: request.body.completed
+      completed: request.body.completed,
     });
     return response.redirect("/");
   } catch (error) {
@@ -86,19 +70,11 @@ app.put("/todos/:id/markAsCompleted", async function (request, response) {
 });
 
 app.delete("/todos/:id", async function (request, response) {
-  const todoId = parseInt(request.params.id, 10);
-  if (isNaN(todoId)) {
-    return response.status(400).send(false); 
-  }
+  const todoId = parseInt(request.params.id, 10); // Ensure the ID is an integer
   try {
-    const todo = await Todo.findByPk(todoId);
-    if (!todo) {
-      return response.send(false);
-    }
-    await todo.destroy();
-    return response.send(true);
+    await Todo.remove(request.params.id);
+    return response.json({ success: true })
   } catch (error) {
-    console.log(error);
     return response.status(422).json(error);
   }
 });

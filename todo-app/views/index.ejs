@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <link rel="stylesheet" href="/css/styles.css">
     <title>Todo Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,8 +14,8 @@
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
 
-            <!-- Form to Add New Todo -->
-            <form action="/todos" method="POST">
+            <form action="/todos" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <div class="flex gap-2 py-4">
                     <div class="flex-auto">
                         <input type="text" name="title" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm" required />
@@ -29,30 +30,38 @@
                     </div>
                 </div>
             </form>
+
             <%- include('todos') %>
-            </div>
         </div>
     </div>
 
     <script>
-        document.querySelectorAll('.delete-button').forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const id = event.target.getAttribute('data-id');
-                if (confirm('Are you sure you want to delete this todo?')) {
-                    try {
+        var token = document 
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+                const id = button.getAttribute('data-id');    
                         const response = await fetch(`/todos/${id}`, {
-                            method: 'DELETE'
+                            method: 'DELETE',
+                            body: JSON.stringify({ "_csrf": token }),
                         });
                         if (response.ok) {
                             location.reload();
                         } else {
                             alert('Failed to delete the todo.');
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
-                }
-            });
+        fetch(`/todos/${todoId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ "_csrf": token }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Todo updated', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
     </script>
 </body>

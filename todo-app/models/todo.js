@@ -54,7 +54,11 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: true })
     }
     static getTodos() {
-      return this.findAll() ;
+      return this.findAll({
+        where: {
+          completed: true
+        }
+      }) ;
     }
   }
   Todo.init({

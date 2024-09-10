@@ -10,10 +10,12 @@ const { title } = require("process");
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf({ cookie: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.set("view engine", "ejs");
 
 app.get('/', async (request, response) => {
+  const allTodos = await Todo.getTodos();
   const overdue = await Todo.overdue();
   const dueToday = await Todo.dueToday();
   const dueLater = await Todo.dueLater();
@@ -23,6 +25,7 @@ app.get('/', async (request, response) => {
       overdue,
       dueToday,
       dueLater,
+      allTodos,
       csrfToken: request.csrfToken(),
     })
   } else {
@@ -78,5 +81,19 @@ app.delete("/todos/:id", async function (request, response) {
     return response.status(422).json(error);
   }
 });
+
+app.get("/todos/completed", async function (request, response) {
+  try {
+    const todo = await Todo.findAll({
+      where: {
+        completed: true
+      }
+    });
+    return response.json(updatedTodo);
+  } catch (error) {
+    console.log(error);
+    return response.status(422).json(error);
+  }
+})
 
 module.exports = app;

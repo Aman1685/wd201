@@ -10,7 +10,7 @@
             <div class="flex itmes-center w-fit my-2 px-2 py-1 rounded">
                 <input id="todo-chbx-<%= store[i].id %>" type="checkbox" <%=store[i].completed ? "checked" : "" %> onclick="updateTodo(<%= store[i].id %>)" class="w-3 h-4 my-1 text-blue-500 bg-gray-100 rounded border-gray-200">
                 <label for="todo-chbx-<%= store[i].id %>" class="ml-2 text-md text-gray-800 cursor-pointer my-0">
-                    <%= store[i].title %>
+                        <%= store[i].title %>  
                 </label>
                 <a href="#" class="icon ml-2" onclick="deleteTodo(<%= store[i].id %>)" >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -20,4 +20,5 @@
             </div>
         </li>
     <% } %>
+       
 </ul>

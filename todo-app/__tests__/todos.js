@@ -1,12 +1,13 @@
 const request = require("supertest");
 const app = require("../app");
-const { sequelize, Todo } = require("../models");
-var cheerio = require("cheerio");
+const { sequelize } = require("../models");
+const cheerio = require("cheerio");
 
 function extractCsrfToken(res) {
-  var $ = cheerio.load(res.text);
+  const $ = cheerio.load(res.text);
   return $("[name=_csrf]").val();
 }
+
 beforeAll(async () => {
   await sequelize.sync({ force: true });
 });
@@ -17,60 +18,75 @@ afterAll(async () => {
 
 test("Create a new todo", async () => {
   const res = await request(app).get("/");
-  const csrfToken = extractCsrfToken(res); 
-  const response = await request(app)
-  .post("/todos")
-  .send({
-    test: "Create todo",
-    duedate: new Date().toISOString(),
-    completed: false,
-    "_csrf" : csrfToken
-  });
-  expect(response.statusCode).toBe(302);
-})
+  const csrfToken = extractCsrfToken(res);
 
-/*test("Marks a todo as complete or incomplete", async () => {
   const response = await request(app)
     .post("/todos")
     .send({
       title: "Test todo",
       dueDate: new Date().toISOString(),
       completed: false,
+      "_csrf": csrfToken
     });
 
-  const todo = JSON.parse(response.text);
-  const todoID = todo.id;
+  expect(response.statusCode).toBe(302);
+});
+
+test("Marks a todo as complete", async () => {
+  const res = await request(app).get("/");
+  const csrfToken = extractCsrfToken(res);
+
+  const response = await request(app)
+    .post("/todos")
+    .send({
+      title: "Test todo",
+      dueDate: new Date().toISOString(),
+      completed: false,
+      "_csrf": csrfToken ,
+    });
+  expect(response.statusCode).toBe(302);
+
+  const todosResponse = await request(app).get("/todos");
+  const todos = JSON.parse(todosResponse.text);
+  const todoID = todos[0].id; 
 
   const markCompleteResponse = await request(app)
     .put(`/todos/${todoID}/markAsCompleted`)
-    .send({ completed: true });
+    .send({
+      completed: true,
+      "_csrf": csrfToken // Pass the CSRF token
+    });
 
+  expect(markCompleteResponse.statusCode).toBe(200);
   const updatedTodo = JSON.parse(markCompleteResponse.text);
   expect(updatedTodo.completed).toBe(true);
 
-  const markIncompleteResponse = await request(app)
-    .put(`/todos/${todoID}/markAsCompleted`)
-    .send({ completed: false });
-
-  const updatedTodo2 = JSON.parse(markIncompleteResponse.text);
-  expect(updatedTodo2.completed).toBe(false);
 });
 
 test("Deletes a todo", async () => {
+  const res = await request(app).get("/");
+  const csrfToken = extractCsrfToken(res);
+
   const response = await request(app)
     .post("/todos")
     .send({
       title: "Delete me",
       dueDate: new Date().toISOString(),
       completed: false,
+      "_csrf": csrfToken ,
+    });
+  expect(response.statusCode).toBe(302);
+
+  const todosResponse = await request(app).get("/todos");
+  const todos = JSON.parse(todosResponse.text);
+  const todoID = todos[0].id;
+
+  const deleteResponse = await request(app)
+    .delete(`/todos/${todoID}`)
+    .send({
+      "_csrf": csrfToken ,
     });
 
-  const todo = JSON.parse(response.text);
-  const todoID = todo.id;
-
-  const deleteResponse = await request(app).delete(`/todos/${todoID}`);
-  expect(deleteResponse.text).toBe("true");
-
-  const getResponse = await request(app).get(`/todos/${todoID}`);
-  expect(getResponse.status).toBe(404);
-});*/
+  expect(deleteResponse.statusCode).toBe(200);
+  expect(deleteResponse.body.success).toBe(true);
+});

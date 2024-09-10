@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where: {
           dueDate: {
-            [Op.lt]: new Date(),
+            [Op.lt]: new Date().toLocaleDateString("en-CA"),
           },
        },
       });
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where: {
           dueDate: {
-            [Op.eq]: new Date(),
+            [Op.eq]: new Date().toLocaleDateString("en-CA"),
           },
        },
       });
@@ -38,11 +38,25 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where: {
           dueDate: {
-            [Op.gt]: new Date(),
+            [Op.gt]: new Date().toLocaleDateString("en-CA"),
           },
        },
       });
     }
+static async reverse(id) {
+  try {
+      const todo = await this.findByPk(id);
+      if (!todo) {
+          throw new Error('Todo not found');
+      }
+        todo.completed = !todo.completed;
+        await todo.save();
+        return todo;
+  } catch (error) {
+      console.error("Error in todo completion:", error);
+      throw error;
+  }
+}
     static async remove(id) {
       return this.destroy({
         where: {

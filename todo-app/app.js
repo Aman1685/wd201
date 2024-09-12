@@ -20,7 +20,7 @@ app.put("/todos/:id", async function (request, response) {
   try {
     const todo = await Todo.reverse(todoId);
     await todo.save();
-    return response.json({ success: true })
+    return response.json(todo)
   } catch (error) {
     console.log(error);
     return response.status(422).json(error);

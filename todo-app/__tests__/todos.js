@@ -33,7 +33,7 @@ test("Create a new todo", async () => {
 
   expect(response.statusCode).toBe(302);
 });
-test("Marks a todo as complete", async () => {
+test("Marks a todo as complete or incomplete", async () => {
   let res = await agent.get("/");
   let csrfToken = extractCsrfToken(res);
 
@@ -50,17 +50,17 @@ test("Marks a todo as complete", async () => {
   const todos = JSON.parse(todosResponse.text);
   dueTodaycount = todos.dueToday.length;
   const latestTodo = todos.dueToday[dueTodaycount - 1];
-
+  const newStatus = !latestTodo.completed;
   res = await agent.get("/");
   csrfToken = extractCsrfToken(res);
-
   const markCompleteResponse = await agent
     .put(`/todos/${latestTodo.id}`)
     .send({
+      completed: true,
       _csrf: csrfToken,
     });
   const updatedTodo = JSON.parse(markCompleteResponse.text);
-  expect(updatedTodo.completed).toBe(true);
+  expect(updatedTodo.completed).toBe(newStatus);
 });
 
 test("Deletes a todo", async () => {
@@ -87,7 +87,7 @@ test("Deletes a todo", async () => {
   csrfToken = extractCsrfToken(res);
 
   const deleteResponse = await agent
-    .delete(`/todos/${latestTodo}`)
+    .delete(`/todos/${latestTodo.id}`)
     .send({
       _csrf: csrfToken
     });

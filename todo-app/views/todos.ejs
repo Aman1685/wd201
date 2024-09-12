@@ -6,7 +6,7 @@
 </h5>
 <ul class="list-none">
     <% for(var i=0; i<store.length; i++) { %>
-        <li class="Todo-Items">
+        <li class="Todo-Item">
             <div class="flex items-center w-fit my-2 px-2 py-1 rounded">
                 <input id="todo-chbx-<%= store[i].id %>" type="checkbox" <%= store[i].completed ? "checked" : "" %> onclick="updateTodo(<%= store[i].id %>, <%= store[i].completed %>)" class="w-3 h-4 my-1 text-blue-500 bg-gray-100 rounded border-gray-200" >
                 <label for="todo-chbx-<%= store[i].id %>" class="ml-2 text-md text-gray-800 cursor-pointer my-0">

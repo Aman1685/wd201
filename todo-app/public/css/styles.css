@@ -2,5 +2,5 @@ body{
     background-color: white;
     font-family: 'Courier New', Courier, monospace;
 }
-.Todo-Items:hover .icon {
+.Todo-Item:hover .icon {
     display: block; }

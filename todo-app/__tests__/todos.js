@@ -26,7 +26,7 @@ test("Create a new todo", async () => {
     .post("/todos")
     .send({
       title: "Test todo",
-      dueDate: new Date().toLocaleDateString("en-CA"), 
+      dueDate: new Date().toISOString().split('T')[0], 
       completed: false,
       _csrf: csrfToken
     });
@@ -41,7 +41,7 @@ test("Marks a todo as complete or incomplete", async () => {
     .post("/todos")
     .send({
       title: "Test todo",
-      dueDate: new Date().toLocaleDateString("en-CA"),
+      dueDate: new Date().toISOString().split('T')[0],
       completed: false,
       _csrf: csrfToken,
     });
@@ -72,7 +72,7 @@ test("Deletes a todo", async () => {
     .post("/todos")
     .send({
       title: "Delete me",
-      dueDate: new Date().toLocaleDateString("en-CA"),
+      dueDate: new Date().toISOString().split('T')[0],
       completed: false,
       _csrf: csrfToken,
     });
@@ -103,7 +103,7 @@ test("Should create sample due today item", async () => {
     .post("/todos")
     .send({
       title: "Due Today",
-      dueDate: new Date().toLocaleDateString("en-CA"), // Today's date
+      dueDate: new Date().toISOString().split('T')[0], // Today's date
       completed: false,
       _csrf: csrfToken
     });
@@ -122,7 +122,7 @@ test("Should create sample due later item", async () => {
     .post("/todos")
     .send({
       title: "Due Later",
-      dueDate: dueLaterDate.toLocaleDateString("en-CA"), // Tomorrow
+      dueDate: dueLaterDate.toISOString().split('T')[0], // Tomorrow
       completed: false,
       _csrf: csrfToken
     });
@@ -141,7 +141,7 @@ test("Should create sample overdue item", async () => {
     .post("/todos")
     .send({
       title: "Overdue",
-      dueDate: overdueDate.toLocaleDateString("en-CA"), // Yesterday
+      dueDate: overdueDate.toISOString().split('T')[0], // Yesterday
       completed: false,
       _csrf: csrfToken
     });

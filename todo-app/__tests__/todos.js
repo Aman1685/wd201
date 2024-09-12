@@ -64,7 +64,6 @@ test("Marks a todo as complete or incomplete", async () => {
 });
 
 test("Deletes a todo", async () => {
-  // Step 1: Create a new todo item
   let res = await agent.get("/");
   let csrfToken = extractCsrfToken(res);
 
@@ -103,7 +102,7 @@ test("Should create sample due today item", async () => {
     .post("/todos")
     .send({
       title: "Due Today",
-      dueDate: new Date().toISOString().split('T')[0], // Today's date
+      dueDate: new Date().toISOString().split('T')[0],
       completed: false,
       _csrf: csrfToken
     });
@@ -116,13 +115,13 @@ test("Should create sample due later item", async () => {
   
   // Add 1 day to today's date
   const dueLaterDate = new Date();
-  dueLaterDate.setDate(dueLaterDate.getDate() + 1); // Tomorrow's date
+  dueLaterDate.setDate(dueLaterDate.getDate() + 1);
   
   const response = await agent
     .post("/todos")
     .send({
       title: "Due Later",
-      dueDate: dueLaterDate.toISOString().split('T')[0], // Tomorrow
+      dueDate: dueLaterDate.toISOString().split('T')[0],
       completed: false,
       _csrf: csrfToken
     });
@@ -135,13 +134,13 @@ test("Should create sample overdue item", async () => {
   
   // Subtract 1 day from today's date
   const overdueDate = new Date();
-  overdueDate.setDate(overdueDate.getDate() - 1); // Yesterday
+  overdueDate.setDate(overdueDate.getDate() - 1);
   
   const response = await agent
     .post("/todos")
     .send({
       title: "Overdue",
-      dueDate: overdueDate.toISOString().split('T')[0], // Yesterday
+      dueDate: overdueDate.toISOString().split('T')[0],
       completed: false,
       _csrf: csrfToken
     });

@@ -51,6 +51,7 @@ app.delete("/todos/:id", async function (request, response) {
 
 // Route to handle adding a new todo
 app.post("/todos", async function (request, response) {
+  console.log("test");
   try {
     const todo = await Todo.create({
       title: request.body.title,

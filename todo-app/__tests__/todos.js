@@ -95,3 +95,56 @@ test("Deletes a todo", async () => {
   expect(deleteResponse.statusCode).toBe(200); 
   expect(deleteResponse.body.success).toBe(true);
 });
+test("Should create sample due today item", async () => {
+  const res = await agent.get("/");
+  const csrfToken = extractCsrfToken(res);
+  
+  const response = await agent
+    .post("/todos")
+    .send({
+      title: "Due Today",
+      dueDate: new Date().toISOString().split('T')[0], // Today's date
+      completed: false,
+      _csrf: csrfToken
+    });
+  
+  expect(response.statusCode).toBe(302);
+});
+test("Should create sample due later item", async () => {
+  const res = await agent.get("/");
+  const csrfToken = extractCsrfToken(res);
+  
+  // Add 1 day to today's date
+  const dueLaterDate = new Date();
+  dueLaterDate.setDate(dueLaterDate.getDate() + 1); // Tomorrow's date
+  
+  const response = await agent
+    .post("/todos")
+    .send({
+      title: "Due Later",
+      dueDate: dueLaterDate.toISOString().split('T')[0], // Tomorrow
+      completed: false,
+      _csrf: csrfToken
+    });
+  
+  expect(response.statusCode).toBe(302);
+});
+test("Should create sample overdue item", async () => {
+  const res = await agent.get("/");
+  const csrfToken = extractCsrfToken(res);
+  
+  // Subtract 1 day from today's date
+  const overdueDate = new Date();
+  overdueDate.setDate(overdueDate.getDate() - 1); // Yesterday
+  
+  const response = await agent
+    .post("/todos")
+    .send({
+      title: "Overdue",
+      dueDate: overdueDate.toISOString().split('T')[0], // Yesterday
+      completed: false,
+      _csrf: csrfToken
+    });
+  
+  expect(response.statusCode).toBe(302);
+});

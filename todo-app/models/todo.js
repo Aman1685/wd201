@@ -56,9 +56,7 @@ static async reverse(id) {
       console.error("Error in todo completion:", error);
       throw error;
   }
-  function setCompletionStatus(todoStatus) {
-    return this.update({ completed: todoStatus });
-  }
+   
 }
     static async remove(id) {
       return this.destroy({
@@ -76,8 +74,12 @@ static async reverse(id) {
           completed: true
         }
       }) ;
-    }
+    } 
+    setCompletionStatus(todoStatus) {
+    return this.update({ completed: todoStatus });
   }
+  }
+ 
   Todo.init({
     title: DataTypes.STRING,
     dueDate: DataTypes.DATEONLY,

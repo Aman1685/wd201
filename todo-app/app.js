@@ -14,8 +14,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set("view engine", "ejs");
 
-
-// Route to handle marking a todo as completed
 app.put("/todos/:id", async function (request, response) {
   const todoId = request.params.id;
   const { completed } = request.body;
@@ -40,7 +38,7 @@ app.get("/todos/:id", async function (request, response) {
 });
 
 app.delete("/todos/:id", async function (request, response) {
-  const todoId = parseInt(request.params.id, 10); // Ensure the ID is an integer
+  const todoId = parseInt(request.params.id, 10);
   try {
     await Todo.remove(request.params.id);
     return response.json({ success: true })
@@ -48,12 +46,10 @@ app.delete("/todos/:id", async function (request, response) {
     return response.status(422).json(error);
   }
 });
-
-// Route to handle adding a new todo
 app.post("/todos", async function (request, response) {
   console.log("test");
   try {
-    const todo = await Todo.create({
+      const todo = await Todo.create({
       title: request.body.title,
       dueDate: request.body.dueDate,
       completed: request.body.completed,

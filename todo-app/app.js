@@ -107,7 +107,7 @@ app.post("/todos",connectEnsureLogin.ensureLoggedIn(), async function (request, 
       dueDate: request.body.dueDate,
       completed: request.body.completed,
     });
-    return response.redirect("/");
+    return response.redirect("/todos");
   } catch (error) {
     console.log(error);
     return response.status(422).json(error);

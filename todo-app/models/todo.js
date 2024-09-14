@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
     static addtodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false})
+      return this.create({ title: title, dueDate: dueDate, completed: false })
     }
     static async overdue () {
       return this.findAll({
@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.lt]: new Date().toISOString().split('T')[0],
           },
+          completed: false ,
        },
       });
     }
@@ -34,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.eq]: new Date().toISOString().split('T')[0],
           },
+          completed: false ,
        },
       });
     }
@@ -43,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.gt]: new Date().toISOString().split('T')[0],
           },
+          completed: false ,
        },
       });
     }

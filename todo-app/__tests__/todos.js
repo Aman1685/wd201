@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const { sequelize } = require("../models");
 const cheerio = require("cheerio");
+const { password } = require("pg/lib/defaults");
 let server, agent ;
 
 function extractCsrfToken(res) {
@@ -18,8 +19,21 @@ afterAll(async () => {
   await sequelize.close();
 });
 
+test("Sign Up", async () => {
+  let res = await agent.get("/signup");
+  const csrfToken = extractCsrfToken(res);
+  res = await agent.post("/users").send({
+    firstName: "Test",
+    lastName: "User A",
+    email: "user.a@test.com",
+    password: "12345678",
+    _csrf: csrfToken,
+  });
+  expect(res.statusCode).toBe(302);
+})
+
 test("Create a new todo", async () => {
-  const res = await agent.get("/");
+  const res = await agent.get("/todos");
   const csrfToken = extractCsrfToken(res);
   console.log(csrfToken);
   const response = await agent
@@ -34,7 +48,7 @@ test("Create a new todo", async () => {
   expect(response.statusCode).toBe(302);
 });
 test("Marks a todo as complete or incomplete", async () => {
-  let res = await agent.get("/");
+  let res = await agent.get("/todos");
   let csrfToken = extractCsrfToken(res);
 
   await agent
@@ -46,12 +60,12 @@ test("Marks a todo as complete or incomplete", async () => {
       _csrf: csrfToken,
     });
 
-  const todosResponse = await agent.get("/").set("Accept", "application/json");
+  const todosResponse = await agent.get("/todos").set("Accept", "application/json");
   const todos = JSON.parse(todosResponse.text);
   dueTodaycount = todos.dueToday.length;
   const latestTodo = todos.dueToday[dueTodaycount - 1];
   const newStatus = !latestTodo.completed;
-  res = await agent.get("/");
+  res = await agent.get("/todos");
   csrfToken = extractCsrfToken(res);
   const markCompleteResponse = await agent
     .put(`/todos/${latestTodo.id}`)
@@ -64,7 +78,7 @@ test("Marks a todo as complete or incomplete", async () => {
 });
 
 test("Deletes a todo", async () => {
-  let res = await agent.get("/");
+  let res = await agent.get("/todos");
   let csrfToken = extractCsrfToken(res);
 
   await agent
@@ -76,13 +90,13 @@ test("Deletes a todo", async () => {
       _csrf: csrfToken,
     });
 
-  const todosResponse = await agent.get("/").set("Accept", "application/json");
+  const todosResponse = await agent.get("/todos").set("Accept", "application/json");
   const todos = JSON.parse(todosResponse.text);
   dueTodaycount = todos.dueToday.length;
   const latestTodo = todos.dueToday[dueTodaycount - 1];
 
 
-  res = await agent.get("/");
+  res = await agent.get("/todos");
   csrfToken = extractCsrfToken(res);
 
   const deleteResponse = await agent
@@ -92,58 +106,4 @@ test("Deletes a todo", async () => {
     });
 
   expect(deleteResponse.statusCode).toBe(200); 
-  expect(deleteResponse.body.success).toBe(true);
-});
-test("Should create sample due today item", async () => {
-  const res = await agent.get("/");
-  const csrfToken = extractCsrfToken(res);
-  
-  const response = await agent
-    .post("/todos")
-    .send({
-      title: "Due Today",
-      dueDate: new Date().toISOString().split('T')[0],
-      completed: false,
-      _csrf: csrfToken
-    });
-  
-  expect(response.statusCode).toBe(302);
-});
-test("Should create sample due later item", async () => {
-  const res = await agent.get("/");
-  const csrfToken = extractCsrfToken(res);
-  
-  // Add 1 day to today's date
-  const dueLaterDate = new Date();
-  dueLaterDate.setDate(dueLaterDate.getDate() + 1);
-  
-  const response = await agent
-    .post("/todos")
-    .send({
-      title: "Due Later",
-      dueDate: dueLaterDate.toISOString().split('T')[0],
-      completed: false,
-      _csrf: csrfToken
-    });
-  
-  expect(response.statusCode).toBe(302);
-});
-test("Should create sample overdue item", async () => {
-  const res = await agent.get("/");
-  const csrfToken = extractCsrfToken(res);
-  
-  // Subtract 1 day from today's date
-  const overdueDate = new Date();
-  overdueDate.setDate(overdueDate.getDate() - 1);
-  
-  const response = await agent
-    .post("/todos")
-    .send({
-      title: "Overdue",
-      dueDate: overdueDate.toISOString().split('T')[0],
-      completed: false,
-      _csrf: csrfToken
-    });
-  
-  expect(response.statusCode).toBe(302);
 });

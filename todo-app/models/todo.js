@@ -92,8 +92,21 @@ static async reverse(id) {
   }
  
   Todo.init({
-    title: DataTypes.STRING,
-    dueDate: DataTypes.DATEONLY,
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false, 
+      validate: {
+        notNull: { msg: "Title is required" },
+          len: 5
+      }
+   },
+    dueDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+      validate: {
+        notNull: { msg: "Due date is required" }
+      }
+    },
     completed: DataTypes.BOOLEAN
   }, {
     sequelize,

@@ -214,7 +214,7 @@ app.get("/signout", (request, response) => {
     // Sign out
     request.logout((err) => {
       if (err) { return next(err); }
-      response.redirect("/todos");
+      response.redirect("/");
     })
   })
 

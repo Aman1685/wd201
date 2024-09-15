@@ -127,7 +127,7 @@ app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response
   }
 });
 app.get('/', async (request, response) => {
-  if(request.isAuthenticated){
+  if(request.isAuthenticated()){
     response.redirect("/todos");
   } else{
     response.render("index", {

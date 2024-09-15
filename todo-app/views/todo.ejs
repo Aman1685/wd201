@@ -50,7 +50,6 @@
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <header class="text-2xl font-bold mb-4">My Todo-list</header>
-            <a href="/signout">Signout</a>
             <% if (messages && messages.error && messages.error.length > 0) { %>
                 <div class="alert alert-danger">
                   <ul>
@@ -70,7 +69,6 @@
            </form>
            <form action="/signout" method="get">
             <div class="flex">
-                <button class="bg-red-300 text-black rounded px-1.5 py-2 font-medium">signout</button>
             </div>
            </form>
 

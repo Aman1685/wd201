@@ -127,41 +127,48 @@ app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response
   }
 });
 app.get('/', async (request, response) => {
+  if(request.isAuthenticated){
+    response.redirect("/todos");
+  } else{
     response.render("index", {
       title: "Todo application",
       csrfToken: request.csrfToken(),
     });
-    });
+  }  
+});
+
 app.get("/signup", async (request, response) => {
     response.render("signup", {title :"Signup", csrfToken: request.csrfToken()})
   });
 
-app.post("/users", async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
-    try {
-      const hashedPwd = await bcrypt.hash(password, saltRounds);
-      const user = await User.create({
-        firstName,
-        lastName,
-        email,
-        password: hashedPwd
-      });
-      req.login(user, (err) => {
-        if (err) {
-          req.flash('error', 'Error logging in after signup');
-          return res.redirect("/signup");
-        }
-        res.redirect("/todos");
-      });
-    } catch (error) {
-      if (error.name === 'SequelizeValidationError') {
-        error.errors.forEach(err => req.flash('error', err.message));
-      } else {
-        req.flash('error', 'An unexpected error occurred');
+app.post("/users", async (request, response) => {
+  try {
+    const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
+    const user = await User.create({
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      email: request.body.email,
+      password: hashedPwd
+    });
+
+    request.login(user, (err) => {
+      if (err) {
+        console.log(err);
       }
-      res.redirect("/signup");
+      return response.redirect("/todos");
+    });
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      error.errors.forEach((err) => {
+        request.flash('error', err.message);
+      });
+      return response.redirect("/signup");
     }
-  });  
+    console.log(error);
+    return response.status(500).json(error);
+  }
+});
+
 
 app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
     const loggedinUser = request.user.id;

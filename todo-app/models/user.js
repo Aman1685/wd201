@@ -23,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notNull: { msg: "First name is required" },
         len: 1,
+        notEmpty: {
+          msg: 'First name cannot be empty',
+        },
       }
     },
     email: {
@@ -31,7 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       validate: {
         isEmail: { msg: "Email address must be valid" },
-        notNull: { msg: "Email is required" }
+        notNull: { msg: "Email is required" },
+        notEmpty: {
+          msg: 'email cannot be empty',
+        },
       }
     },
     password: {
@@ -39,7 +45,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: { msg: "password is required" },
-        len: 8
+        len: 8,
+        notEmpty: {
+          msg: 'password cannot be empty',
+        },
       }   
     }
   }, {

@@ -68,6 +68,11 @@
                    <button type="submit" class="bg-green-600 text-white px-5 py-1.5 rounded font-medium">Add</button>
                </div>
            </form>
+           <form action="/signout" method="get">
+            <div class="flex">
+                <button class="bg-red-300 text-black rounded px-1.5 py-2 font-medium">signout</button>
+            </div>
+           </form>
 
            <%- include('todos.ejs', { title: "Overdue", store: overdue, countId: "count-overdue" }) %>
            <%- include('todos.ejs', { title: "Due Today", store: dueToday, countId: "count-due-today" }) %>
